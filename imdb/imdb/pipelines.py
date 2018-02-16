@@ -30,7 +30,7 @@ class ImdbPipeline:
         self.session.close()
 
     def process_item(self, item: dict, spider: Spider):
-        movie = self.session.query(Movie).filter(Movie.id == item['imdb_id']).first()
+        movie: Movie = self.session.query(Movie).filter(Movie.id == item['imdb_id']).first()
         if movie is None:
             movie = Movie(id=item['imdb_id'],
                           title=item['title'],
@@ -40,9 +40,10 @@ class ImdbPipeline:
                           is_movie=item['is_movie'],
                           added=datetime.now())
             self.session.add(movie)
-        rating = self.session.query(Rating).filter(and_(Rating.user_id == item['user'], Rating.movie == movie)).first()
+        rating: list = self.session.query(Rating).filter(
+            and_(Rating.user_id == item['user'], Rating.movie == movie)).first()
         if rating is None:
-            rating = Rating(user_score=item['user_score'], added=datetime.now(), updated=datetime.now())
+            rating = Rating(user_score=item['user_score'], added=item['rated'], updated=datetime.now())
             print(f'New rating: {movie.title} - {rating.user_score}')
             self.users[item['user']].ratings.append(rating)
             movie.ratings.append(rating)

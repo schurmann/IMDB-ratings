@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, create_engine, ForeignKey, Boolean, Numeric, DateTime
+from sqlalchemy import Column, Integer, String, create_engine, ForeignKey, Boolean, Numeric, DateTime, DECIMAL
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -18,7 +18,7 @@ class Movie(Base):
     __tablename__ = 'movies'
 
     id = Column(String(9), primary_key=True)
-    imdb_score = Column(Numeric)
+    imdb_score = Column(DECIMAL(precision=2, scale=1, asdecimal=False))
     title = Column(String(500))
     director = Column(String(500))
     year = Column(Integer)

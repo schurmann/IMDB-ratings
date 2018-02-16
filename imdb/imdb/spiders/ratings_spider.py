@@ -1,5 +1,6 @@
 import scrapy
 import re
+from dateutil.parser import parse
 
 
 class RatingsSpider(scrapy.Spider):
@@ -25,7 +26,8 @@ class RatingsSpider(scrapy.Spider):
         'imdb_id': 'div[2]/h3/a/@href',
         'user_score': 'div[2]/div[2]/div[2]/span[2]/text()',
         'imdb_score': 'div[2]/div[2]/div[1]/span[2]/text()',
-        'director': 'div[2]/p[3]/a[1]/text()',
+        'rated': 'div[2]/p[2]/text()',
+        'director': 'div[2]/p[4]/a[1]/text()',
         'year': 'div[2]/h3/span[3]/text()'
     }
 
@@ -52,6 +54,7 @@ class RatingsSpider(scrapy.Spider):
                 'imdb_id': movie.xpath(self.selectors_xpath['imdb_id']).extract_first()[7:16],
                 'user_score': int(movie.xpath(self.selectors_xpath['user_score']).extract_first()),
                 'imdb_score': float(movie.xpath(self.selectors_xpath['imdb_score']).extract_first()),
+                'rated': parse(movie.xpath(self.selectors_xpath['rated']).extract_first()[9:]),
                 'year': year,
                 'is_movie': is_movie,
                 'director': '' if not is_movie else movie.xpath(self.selectors_xpath['director']).extract_first(),

@@ -3,7 +3,7 @@ from pygsheets import Worksheet, Spreadsheet
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from models import Movie, Rating, User
+from models import Movie
 
 engine = create_engine('mysql+mysqldb://root:root@localhost:3306/imdb')
 session = Session(bind=engine, autoflush=False)
@@ -35,7 +35,7 @@ def get_ratings():
                           'ORDER BY title')
     range_ = []
     for r in res:
-        row = list(map(lambda x: '' if x is None else x, r))
+        row = ['' if x is None else x for x in r]
         range_.append(row[:7] + [''] + row[7:])
     return range_
 

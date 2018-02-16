@@ -37,7 +37,8 @@ class ImdbPipeline:
                           imdb_score=item['imdb_score'],
                           director=item['director'],
                           year=item['year'],
-                          is_movie=item['is_movie'])
+                          is_movie=item['is_movie'],
+                          added=datetime.now())
             self.session.add(movie)
         rating = self.session.query(Rating).filter(and_(Rating.user_id == item['user'], Rating.movie == movie)).first()
         if rating is None:

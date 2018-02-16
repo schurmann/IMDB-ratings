@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import pygsheets
 from pygsheets import Worksheet, Spreadsheet
 from sqlalchemy import create_engine
@@ -35,7 +37,8 @@ def get_ratings():
                           'ORDER BY title')
     range_ = []
     for r in res:
-        row = ['' if x is None else x for x in r]
+        row = [float(x) if isinstance(x, Decimal) else x for x in r]
+        row = ['' if x is None else x for x in row]
         range_.append(row[:7] + [''] + row[7:])
     return range_
 

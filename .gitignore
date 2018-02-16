@@ -1,0 +1,5 @@
+.idea/
+*.iml
+__pycache__/
+imdb/sheets_access.json
+imdb/sheets_secret.json

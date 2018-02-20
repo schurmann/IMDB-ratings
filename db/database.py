@@ -124,8 +124,8 @@ class Database:
             .first()[0]
         return str(round(res, 1)) if res else None
 
-        def close(self):
-            self.__session.close()
+    def close(self):
+        self.__session.close()
 
     if __name__ == '__main__':
         db = Database()

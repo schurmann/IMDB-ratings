@@ -111,18 +111,21 @@ class Database:
         return res.fetchall()
 
     def lastest_ratings(self) -> list:
-        return self.__session.query(User.name, Entry.title, Rating.user_score) \
+        return self.__session.query(User.name, Rating.added, Entry.title, Rating.user_score) \
             .join(Rating.entry) \
             .join(User, User.id == Rating.user_id) \
+            .group_by(User.name, Entry.title) \
             .order_by(Rating.added.desc(), Entry.title.asc()) \
             .limit(10) \
             .all()
+
 
     def average_score(self, entry_id: str):
         res = self.__session.query(func.avg(Rating.user_score)) \
             .filter_by(entry_id=entry_id) \
             .first()[0]
         return str(round(res, 1)) if res else None
+
 
     def close(self):
         self.__session.close()

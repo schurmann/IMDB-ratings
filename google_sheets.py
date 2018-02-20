@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 import pygsheets
+import humanize
 from pygsheets import Worksheet, Spreadsheet
 
 from db.database import Database
@@ -34,13 +35,12 @@ def upload():
     if wk_movies.title == 'Filmer':
         movies = list(map(transform_row, db.movies_matrix()))
         wk_movies.update_cells(f'A2:J{len(movies) + 1}', movies)
-        latest_ratings = db.lastest_ratings()
-        wk_movies.update_cells('L12:N21', latest_ratings)
+        latest_ratings = [(a, humanize.naturalday(b), c, d) for (a, b, c, d) in db.lastest_ratings()]
+        wk_movies.update_cells('L12:O21', latest_ratings)
     else:
         print(f'Wrong title on worksheet: {wk_movies.title}')
 
     if wk_shows.title == 'Serier':
-        movies = list(map(transform_row, db.movies_matrix()))
         shows = list(map(transform_row, db.shows_matrix()))
         wk_shows.update_cells(f'A2:J{len(shows) + 1}', shows)
     else:

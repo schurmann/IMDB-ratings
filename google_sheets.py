@@ -5,6 +5,8 @@ from pygsheets import Worksheet, Spreadsheet
 
 from database import Database
 
+db = Database()
+
 
 def get_sheet(id: str) -> Spreadsheet:
     gc = pygsheets.authorize(outh_file='sheets_access.json')
@@ -25,8 +27,7 @@ def transform_row(data: tuple):
     return row
 
 
-if __name__ == '__main__':
-    db = Database()
+def upload():
     sh = get_sheet(id='1KG4U0tmNyn0EDwckLz-rP4dqIuzSCzvv1WlL1VvYcmM')  # IMDB
     wk_movies: Worksheet = sh.worksheet('index', 0)
     wk_shows: Worksheet = sh.worksheet('index', 1)

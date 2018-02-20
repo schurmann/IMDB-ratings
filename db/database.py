@@ -81,7 +81,7 @@ class Database:
             "JOIN entries e ON r.entry_id = e.id " \
             "JOIN movies m ON e.id = m.entry_id " \
             "JOIN users u ON r.user_id = u.id) x " \
-            "GROUP BY id ORDER BY title")
+            "GROUP BY id, year, director ORDER BY title")
         return res.fetchall()
 
     def shows_matrix(self) -> list:
@@ -107,7 +107,7 @@ class Database:
             "JOIN entries e ON r.entry_id = e.id " \
             "JOIN shows s ON e.id = s.entry_id " \
             "JOIN users u ON r.user_id = u.id) x " \
-            "GROUP BY id ORDER BY title")
+            "GROUP BY id, start_year, end_year ORDER BY title")
         return res.fetchall()
 
     def lastest_ratings(self) -> list:

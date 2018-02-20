@@ -68,9 +68,9 @@ if __name__ == '__main__':
     conn = session.connection()
     sh = get_sheet(id='1KG4U0tmNyn0EDwckLz-rP4dqIuzSCzvv1WlL1VvYcmM')  # IMDB
     wk: Worksheet = sh.worksheet('index', 0)
-    # movies: list = session.query(Movie).order_by(Movie.title).all()
-    # ratings = list(map(transform_row, get_ratings()))
+    movies: list = session.query(Movie).order_by(Movie.title).all()
+    ratings = list(map(transform_row, get_ratings()))
 
-    # wk.update_cells(f'A2:J{len(movies) + 1}', ratings)
+    wk.update_cells(f'A2:J{len(movies) + 1}', ratings)
     latest_ratings = get_lastest_ratings()
     wk.update_cells('L12:N21', latest_ratings)

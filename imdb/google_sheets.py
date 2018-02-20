@@ -43,7 +43,7 @@ def get_lastest_ratings() -> list:
         'FROM movies m ' \
         'JOIN ratings r ON m.id=r.movie_id ' \
         'JOIN users u ON r.user_id=u.id ' \
-        'ORDER BY r.added DESC LIMIT 10')
+        'ORDER BY r.added DESC, title LIMIT 10')
     return [list(row) for row in res]
 
 

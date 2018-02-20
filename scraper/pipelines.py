@@ -8,7 +8,7 @@ from datetime import datetime
 
 from scrapy import Spider
 
-from database import Database
+from db.database import Database
 from db.models import Movie, Rating, Entry, User, Show
 
 

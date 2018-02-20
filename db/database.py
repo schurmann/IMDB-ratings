@@ -127,6 +127,7 @@ class Database:
     def close(self):
         self.__session.close()
 
-    if __name__ == '__main__':
-        db = Database()
-        db.create_tables(USERS)
+
+if __name__ == '__main__':
+    db = Database()
+    db.create_tables(USERS)

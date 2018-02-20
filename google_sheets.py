@@ -3,7 +3,7 @@ from decimal import Decimal
 import pygsheets
 from pygsheets import Worksheet, Spreadsheet
 
-from database import Database
+from db.database import Database
 
 db = Database()
 

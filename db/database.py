@@ -114,7 +114,7 @@ class Database:
         return self.__session.query(User.name, Rating.added, Entry.title, Rating.user_score) \
             .join(Rating.entry) \
             .join(User, User.id == Rating.user_id) \
-            .group_by(User.name, Entry.title) \
+            .group_by(User.name, Entry.title, Rating.added, Rating.user_score) \
             .order_by(Rating.added.desc(), Entry.title.asc()) \
             .limit(10) \
             .all()

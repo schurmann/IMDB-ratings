@@ -110,6 +110,24 @@ class Database:
             "GROUP BY id, start_year, end_year ORDER BY title")
         return res.fetchall()
 
+    def ratings(self, user_id: str, _filter: str = 'all') -> list:
+        allowed = ['show', 'movie', 'all']
+        _filter = _filter.lower()
+        if _filter not in allowed:
+            raise AssertionError(f'filter {_filter} not allowed: {allowed}')
+        if _filter == 'all':
+            return self.__session.query(Rating) \
+                .join(User.ratings) \
+                .filter(User.id == user_id) \
+                .all()
+        entity = Show if _filter == 'show' else Movie
+        stmt = self.__session.query(entity.entry_id).subquery()
+        return self.__session.query(Rating) \
+            .join(User) \
+            .join(stmt, Rating.entry_id == stmt.c.entry_id) \
+            .filter(User.id == user_id) \
+            .all()
+
     def lastest_ratings(self) -> list:
         return self.__session.query(User.name, Rating.added, Entry.title, Rating.user_score) \
             .join(Rating.entry) \

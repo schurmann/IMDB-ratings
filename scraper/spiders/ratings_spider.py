@@ -14,7 +14,8 @@ class RatingsSpider(scrapy.Spider):
         'imdb_score': 'div[2]/div[2]/div[1]/span[2]/text()',
         'rated_date': 'div[2]/p[2]/text()',
         'director': 'div[2]/p[4]/a[1]/text()',
-        'year': 'div[2]/h3/span[3]/text()'
+        'year': 'div[2]/h3/span[3]/text()',
+        'votes': 'div[2]/p[5]/span[2]/text()'
     }
 
     def start_requests(self):
@@ -61,4 +62,5 @@ class RatingsSpider(scrapy.Spider):
             'title': entry.xpath(self.selectors_xpath['title']).extract_first(),
             'user_score': int(entry.xpath(self.selectors_xpath['user_score']).extract_first()),
             'rated_date': parse(entry.xpath(self.selectors_xpath['rated_date']).extract_first()[9:]),
+            'votes': entry.xpath(self.selectors_xpath['votes']).extract_first().replace(',', '')
         }

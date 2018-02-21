@@ -9,7 +9,7 @@ if __name__ == '__main__':
     configure_logging(install_root_handler=False)
     logging.basicConfig(
         filename='/tmp/scraper.log',
-        format='%(levelname)s: %(message)s',
+        format='%(created) - f%(levelname)s: %(message)s',
         level=logging.INFO
     )
     process = CrawlerProcess(get_project_settings())

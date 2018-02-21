@@ -40,6 +40,7 @@ class Entry(Base):
     imdb_score = Column(DECIMAL(precision=2, scale=1, asdecimal=False), nullable=False)
     title = Column(String(500), nullable=False)
     added = Column(DateTime)
+    votes = Column(Integer, nullable=False)
     ratings = relationship('Rating', back_populates='entry')
     movie = relationship('Movie', order_by=Movie.id, uselist=False, back_populates='entry',
                          cascade='all, delete-orphan')

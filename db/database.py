@@ -1,9 +1,15 @@
+from collections import OrderedDict
+
 from sqlalchemy import create_engine, func
 from sqlalchemy.engine import Engine, ResultProxy
 from sqlalchemy.orm import sessionmaker, Session
 
 from db.models import User, Base, Movie, Entry, Rating, Show
 from definitions import DB_CONF, USERS
+
+
+def user_stmt(users: OrderedDict) -> str:
+    return ''.join([f"max(if(user_id = '{user_id}', score, NULL)) AS {name}, " for user_id, name in users.items()])
 
 
 class Database:
@@ -27,19 +33,16 @@ class Database:
 
     def movie(self, _id: str) -> Movie:
         return self.__session.query(Movie) \
-            .join(Entry.movie) \
-            .filter(Entry.id == _id) \
+            .filter(Movie.entry_id == _id) \
             .first()
 
     def rating(self, user_id: str, entry_id: str) -> Rating:
-        if __name__ == '__main__':
-            return self.__session.query(Rating) \
-                .join(User) \
-                .join(Movie) \
-                .join(Show) \
-                .filter(User.id == user_id) \
-                .filter(Entry.id == entry_id) \
-                .first()
+        return self.__session.query(Rating) \
+            .join(User) \
+            .join(Entry) \
+            .filter(User.id == user_id) \
+            .filter(Entry.id == entry_id) \
+            .first()
 
     def add(self, base: Base):
         self.__session.add(base)
@@ -54,25 +57,19 @@ class Database:
 
     def show(self, _id: str) -> Show:
         return self.__session.query(Show) \
-            .join(Entry.show) \
-            .filter(Entry.id == _id) \
+            .filter(Show.entry_id == _id) \
             .first()
 
-    def movies_matrix(self) -> list:
+    def movies_matrix(self, users: OrderedDict) -> list:
         res: ResultProxy = self.__session.execute(
-            "SELECT id, title, " \
-            "max(if(name = 'Joppe', score, NULL)) AS Joppe, " \
-            "max(if(name = 'Isak', score, NULL))  AS Isak, " \
-            "max(if(name = 'Simon', score, NULL)) AS Simon, " \
-            "max(if(name = 'Albin', score, NULL)) AS Albin, " \
-            "max(if(name = 'Elon', score, NULL))  AS Elon, " \
+            f"SELECT id, title, {user_stmt(users)}" \
             "imdb_score, " \
             "year, " \
             "director " \
             "FROM (SELECT " \
             "e.id AS id, " \
             "e.title AS title, " \
-            "u.name AS name, " \
+            "u.id AS user_id, " \
             "r.user_score AS score, " \
             "e.imdb_score AS imdb_score, " \
             "m.year AS year, " \
@@ -84,21 +81,16 @@ class Database:
             "GROUP BY id, year, director ORDER BY title")
         return res.fetchall()
 
-    def shows_matrix(self) -> list:
+    def shows_matrix(self, users: OrderedDict) -> list:
         res: ResultProxy = self.__session.execute(
-            "SELECT id, title, " \
-            "max(if(name = 'Joppe', score, NULL)) AS Joppe, " \
-            "max(if(name = 'Isak', score, NULL))  AS Isak, " \
-            "max(if(name = 'Simon', score, NULL)) AS Simon, " \
-            "max(if(name = 'Albin', score, NULL)) AS Albin, " \
-            "max(if(name = 'Elon', score, NULL))  AS Elon, " \
+            f"SELECT id, title, {user_stmt(users)}" \
             "imdb_score, " \
             "start_year, " \
             "end_year " \
             "FROM (SELECT " \
             "e.id AS id, " \
             "e.title AS title, " \
-            "u.name AS name, " \
+            "u.id AS user_id, " \
             "r.user_score AS score, " \
             "e.imdb_score AS imdb_score, " \
             "s.start_year AS start_year, " \
@@ -137,13 +129,11 @@ class Database:
             .limit(10) \
             .all()
 
-
     def average_score(self, entry_id: str):
         res = self.__session.query(func.avg(Rating.user_score)) \
             .filter_by(entry_id=entry_id) \
             .first()[0]
         return str(round(res, 1)) if res else None
-
 
     def close(self):
         self.__session.close()

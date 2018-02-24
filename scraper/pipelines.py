@@ -65,7 +65,7 @@ class ImdbPipeline:
         if movie is None:
             entry = create_entry(item)
             movie = create_movie(entry, item)
-        rating = self.db.rating(item['user_id'], item['imdb_id'])
+        rating = self.db.rating(item['user_id'].id, item['imdb_id'])
         if rating is None:
             rating = create_rating(item, movie.entry, user)
         return rating

@@ -35,7 +35,6 @@ def create_movie(entry: Entry, item: dict):
 def create_rating(item: dict, entry: Entry, user: User):
     return Rating(user_score=item['user_score'],
                   added=item['rated_date'],
-                  updated=datetime.now(),
                   entry=entry,
                   user=user)
 
@@ -54,7 +53,7 @@ class ImdbPipeline:
 
         if rating.user_score != item['user_score']:
             rating.user_score = item['user_score']
-            rating.updated = datetime.now()
+            rating.added = item['rated_date']
         if rating.entry.votes != item['votes']:
             rating.entry.votes = item['votes']
         self.db.add(rating)

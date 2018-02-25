@@ -57,4 +57,3 @@ class Rating(Base):
     user_id = Column(String(10), ForeignKey('users.id'))
     user = relationship('User', back_populates='ratings')
     added = Column(DateTime)
-    updated = Column(DateTime)

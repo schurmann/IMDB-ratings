@@ -129,6 +129,13 @@ class Database:
             .limit(10) \
             .all()
 
+    def top_movies(self) -> list:
+        return self.__session.execute(
+            "SELECT e.id, title, "
+            "round(avg(user_score), 1) AS score "
+            "FROM ratings r JOIN entries e ON r.entry_id=e.id "
+            "GROUP BY e.id HAVING count(e.id)=(SELECT count(*) FROM users) ORDER BY score DESC;").fetchall()
+
     def average_score(self, entry_id: str):
         res = self.__session.query(func.avg(Rating.user_score)) \
             .filter_by(entry_id=entry_id) \

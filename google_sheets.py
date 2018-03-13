@@ -72,7 +72,6 @@ def upload_top_movies(wk_top_movies: Worksheet):
     if wk_top_movies.title == 'Topplistor':
         top_movies = make_serializable(db.top_movies())
         top_movies = [(to_link(IMDB_LINK.format(row[0]), row[1]), row[2]) for row in top_movies]
-        from ipdb import set_trace; set_trace()
         row_end, col_end = len(top_movies) + 2, ALPHABETH[len(top_movies[0]) - 1]
         wk_top_movies.update_cells(f'A3:{col_end}{row_end}', top_movies)
     else:

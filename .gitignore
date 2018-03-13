@@ -6,3 +6,4 @@ sheets_secret.json
 .python-version
 env.ini
 user_agents
+.pytest_cache/

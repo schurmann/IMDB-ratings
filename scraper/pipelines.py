@@ -5,11 +5,13 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from datetime import datetime
+import sys
 
 from scrapy import Spider
 
 from db.database import Database
 from db.models import Movie, Rating, Entry, User, Show
+from sqlalchemy.exc import InvalidRequestError
 
 
 def create_entry(item: dict):
@@ -44,7 +46,12 @@ class ImdbPipeline:
         self.db = Database()
 
     def close_spider(self, spider: Spider):
-        self.db.commit()
+        try:
+            self.db.commit()
+        except InvalidRequestError as err:
+            with open('err.log', 'w') as f:
+                f.write(f'Error: {err}')
+            sys.exit(1)
         self.db.close()
 
     def process_item(self, item: dict, spider: Spider):

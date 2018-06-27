@@ -7,3 +7,5 @@ sheets_secret.json
 env.ini
 user_agents
 .pytest_cache/
+.pyre
+.pyre_configuration

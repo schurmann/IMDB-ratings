@@ -38,30 +38,33 @@ def upload():
     sh = get_sheet(id='1KG4U0tmNyn0EDwckLz-rP4dqIuzSCzvv1WlL1VvYcmM')  # IMDB
     wk_movies: Worksheet = sh.worksheet('index', 0)
     wk_shows: Worksheet = sh.worksheet('index', 1)
-    wk_top_movies: Worksheet = sh.worksheet('index', 4)
+    wk_top_movies: Worksheet = sh.worksheet('index', 2)
     upload_movies(wk_movies)
     upload_shows(wk_shows)
     upload_top_movies(wk_top_movies)
 
 
 def upload_shows(wk_shows: Worksheet) -> None:
-    if wk_shows.title == 'Serier':
+    title = 'Serier'
+    if wk_shows.title == title:
         shows = list(map(transform_row, make_serializable(db.shows_matrix(USERS))))
         row_end, col_end = len(shows) + 1, ALPHABETH[len(USERS) + 4]
         wk_shows.update_cells(f'A2:{col_end}{row_end}', shows)
     else:
-        print(f'Wrong title on worksheet: {wk_shows.title}')
+        print(f'Wrong title on worksheet. Got {wk_shows.title} ,expected {title}')
 
 
 def upload_movies(wk_movies: Worksheet) -> None:
-    if wk_movies.title == 'Filmer':
+    title = 'Filmer'
+    if wk_movies.title == title:
         movies = list(map(transform_row, make_serializable(db.movies_matrix(USERS))))
         row_end, col_end = len(movies) + 1, ALPHABETH[len(USERS) + 4]
         wk_movies.update_cells(f'A2:{col_end}{row_end}', movies)
-        latest_ratings = [(a, humanize.naturalday(b), c, d) for (a, b, c, d) in db.lastest_ratings()]
+        latest_ratings = [(a, humanize.naturalday(b), to_link(IMDB_LINK.format(e), c), d) for (a, b, c, d, e) in
+                          db.latest_ratings()]
         wk_movies.update_cells('L12:O21', latest_ratings)
     else:
-        print(f'Wrong title on worksheet: {wk_movies.title}')
+        print(f'Wrong title on worksheet. Got {wk_movies.title} ,expected {title}')
 
 
 def make_serializable(data: list) -> list:
@@ -69,10 +72,11 @@ def make_serializable(data: list) -> list:
 
 
 def upload_top_movies(wk_top_movies: Worksheet):
-    if wk_top_movies.title == 'Topplistor':
+    title = 'Topplistor'
+    if wk_top_movies.title == title:
         top_movies = make_serializable(db.top_movies())
         top_movies = [(to_link(IMDB_LINK.format(row[0]), row[1]), row[2]) for row in top_movies]
         row_end, col_end = len(top_movies) + 2, ALPHABETH[len(top_movies[0]) - 1]
         wk_top_movies.update_cells(f'A3:{col_end}{row_end}', top_movies)
     else:
-        print(f'Wrong title on worksheet: {wk_top_movies.title}')
+        print(f'Wrong title on worksheet. Got {wk_top_movies.title} ,expected {title}')

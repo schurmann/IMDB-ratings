@@ -5,7 +5,7 @@ from sqlalchemy.engine import Engine, ResultProxy
 from sqlalchemy.orm import sessionmaker, Session
 
 from db.models import User, Base, Movie, Entry, Rating, Show
-from definitions import DB_CONF, USERS
+from definitions import DB_CONF
 
 
 def user_stmt(users: OrderedDict) -> str:
@@ -120,8 +120,8 @@ class Database:
             .filter(User.id == user_id) \
             .all()
 
-    def lastest_ratings(self) -> list:
-        return self.__session.query(User.name, Rating.added, Entry.title, Rating.user_score) \
+    def latest_ratings(self) -> list:
+        return self.__session.query(User.name, Rating.added, Entry.title, Rating.user_score, Entry.id) \
             .join(Rating.entry) \
             .join(User, User.id == Rating.user_id) \
             .group_by(User.name, Entry.title, Rating.added, Rating.user_score) \
@@ -148,4 +148,6 @@ class Database:
 
 if __name__ == '__main__':
     db = Database()
-    db.create_tables(USERS)
+    #db.create_tables(USERS)
+    top = db.top_movies()
+    print(len(top), top)

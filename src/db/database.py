@@ -145,9 +145,12 @@ class Database:
     def close(self):
         self.__session.close()
 
+    def session(self):
+        return self.__session
+
 
 if __name__ == '__main__':
     db = Database()
-    #db.create_tables(USERS)
+    # db.create_tables(USERS)
     top = db.top_movies()
     print(len(top), top)

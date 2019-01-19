@@ -8,13 +8,15 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
+from definitions import ROOT_DIR
+from os import path
 
 BOT_NAME = 'imdb'
 DB_URI = 'mysql+mysqldb://root:root@localhost:3306/imdb'
 
 SPIDER_MODULES = ['scraper.spiders']
 NEWSPIDER_MODULE = 'scraper.spiders'
-USER_AGENT_LIST = 'user_agents'
+USER_AGENT_LIST = path.join(ROOT_DIR, 'user_agents')
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'imdb (+http://www.yourdomain.com)'

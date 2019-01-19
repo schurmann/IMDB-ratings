@@ -2,10 +2,11 @@ import simplejson as json
 
 import pygsheets
 import humanize
+from os import path
 from pygsheets import Worksheet, Spreadsheet
 
 from db.database import Database
-from definitions import USERS
+from definitions import USERS, ROOT_DIR
 
 db = Database()
 ALPHABETH = 'ABCDEFGHIJKMNOPQRSTUVWXYZ'
@@ -13,7 +14,7 @@ IMDB_LINK = 'http://www.imdb.com/title/{}'
 
 
 def get_sheet(id: str) -> Spreadsheet:
-    gc = pygsheets.authorize(outh_file='sheets_access.json')
+    gc = pygsheets.authorize(outh_file=path.join(ROOT_DIR, 'sheets_access.json'))
     sh = gc.open_by_key(id)
     return sh
 

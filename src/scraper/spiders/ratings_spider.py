@@ -2,7 +2,7 @@ import scrapy
 import re
 from dateutil.parser import parse
 
-from db.database import Database
+from db import DB
 
 
 class RatingsSpider(scrapy.Spider):
@@ -19,8 +19,7 @@ class RatingsSpider(scrapy.Spider):
     }
 
     def start_requests(self):
-        db = Database()
-        users = db.users()
+        users = DB.users()
         urls = [f'http://www.imdb.com/user/{user.id}/ratings' for user in users]
         for index, url in enumerate(urls):
             request = scrapy.Request(url=url, callback=self.parse, meta={'user': list(users)[index]})
@@ -31,7 +30,7 @@ class RatingsSpider(scrapy.Spider):
             if len(entry.xpath(self.selectors_xpath['title'])) == 2:  # Series episode
                 continue
             year = entry.xpath(self.selectors_xpath['year']).extract_first()
-            is_movie = not year or not '–' in year
+            is_movie = not year or '–' not in year
             data = self.parse_movie(entry) if is_movie else self.parse_show(entry)
             data['user_id'] = response.meta['user']
             data.update(self.parse_common(entry))

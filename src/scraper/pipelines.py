@@ -9,7 +9,7 @@ import sys
 
 from scrapy import Spider
 
-from db.database import Database
+from db import DB
 from db.models import Movie, Rating, Entry, User, Show
 from sqlalchemy.exc import InvalidRequestError
 
@@ -43,16 +43,16 @@ def create_rating(item: dict, entry: Entry, user: User):
 
 class ImdbPipeline:
     def __init__(self):
-        self.db = Database()
+        pass
 
     def close_spider(self, spider: Spider):
         try:
-            self.db.commit()
+            DB.commit()
         except InvalidRequestError as err:
             with open('err.log', 'w') as f:
                 f.write(f'Error: {err}')
             sys.exit(1)
-        self.db.close()
+        DB.close()
 
     def process_item(self, item: dict, spider: Spider):
         user = item['user_id']
@@ -63,25 +63,25 @@ class ImdbPipeline:
             rating.added = item['rated_date']
         if rating.entry.votes != item['votes']:
             rating.entry.votes = item['votes']
-        self.db.add(rating)
+        DB.add(rating)
         return item
 
     def process_movie(self, item: dict, user: User) -> Rating:
-        movie = self.db.movie(item['imdb_id'])
+        movie = DB.movie(item['imdb_id'])
         if movie is None:
             entry = create_entry(item)
             movie = create_movie(entry, item)
-        rating = self.db.rating(item['user_id'].id, item['imdb_id'])
+        rating = DB.rating(item['user_id'].id, item['imdb_id'])
         if rating is None:
             rating = create_rating(item, movie.entry, user)
         return rating
 
     def process_show(self, item: dict, user: User) -> Rating:
-        show = self.db.show(item['imdb_id'])
+        show = DB.show(item['imdb_id'])
         if show is None:
             entry = create_entry(item)
             show = create_show(entry, item)
-        rating = self.db.rating(item['user_id'].id, item['imdb_id'])
+        rating = DB.rating(item['user_id'].id, item['imdb_id'])
         if rating is None:
             rating = create_rating(item, show.entry, user)
         return rating

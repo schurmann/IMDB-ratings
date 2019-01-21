@@ -148,9 +148,3 @@ class Database:
     def session(self):
         return self.__session
 
-
-if __name__ == '__main__':
-    db = Database()
-    # db.create_tables(USERS)
-    top = db.top_movies()
-    print(len(top), top)

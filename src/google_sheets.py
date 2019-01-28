@@ -28,10 +28,7 @@ def transform_row(data: list):
     title = data[1]
     avg = db.average_score(entry_id)
     row = ['' if x is None else x for x in data]
-    row = [to_link(IMDB_LINK.format(entry_id), title)] \
-          + row[2:7] \
-          + [avg] \
-          + row[7:]
+    row = [to_link(IMDB_LINK.format(entry_id), title)] + row[2 : len(USERS) + 2] + [avg] + row[len(USERS) + 2 :]
     return row
 
 
@@ -61,9 +58,10 @@ def upload_movies(wk_movies: Worksheet) -> None:
         movies = list(map(transform_row, make_serializable(db.movies_matrix(USERS))))
         row_end, col_end = len(movies) + 1, ALPHABETH[len(USERS) + 4]
         wk_movies.update_values(f'A2:{col_end}{row_end}', movies)
-        latest_ratings = [[a, humanize.naturalday(b), to_link(IMDB_LINK.format(e), c), d] for (a, b, c, d, e) in
-                          db.latest_ratings()]
-        wk_movies.update_values('L12:O21', latest_ratings)
+        latest_ratings = [
+            [a, humanize.naturalday(b), to_link(IMDB_LINK.format(e), c), d] for (a, b, c, d, e) in db.latest_ratings()
+        ]
+        wk_movies.update_values('M12:P21', latest_ratings)
     else:
         print(f'Wrong title on worksheet. Got {wk_movies.title} ,expected {title}')
 

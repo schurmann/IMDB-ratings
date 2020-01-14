@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -37,7 +37,7 @@ class Entry(Base):
     __tablename__ = 'entries'
 
     id = Column(String(9), primary_key=True, nullable=False)
-    imdb_score = Column(Float(precision=2, scale=1), nullable=False)
+    imdb_score = Column(String(3), nullable=False)
     title = Column(String(500), nullable=False)
     added = Column(DateTime)
     votes = Column(Integer, nullable=False)
